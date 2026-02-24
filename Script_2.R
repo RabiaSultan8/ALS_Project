@@ -3,8 +3,8 @@
 # ==============================================================================
 library(WGCNA); library(dplyr); library(ggplot2); library(ggrepel); library(igraph)
 
+set.seed(1122)
 tryCatch({ allowWGCNAThreads() }, error = function(e) message("Running in single-thread mode for stability."))
-set.seed(2026)
 dir.create("Manuscript_Figures/WGCNA", recursive = TRUE, showWarnings = FALSE)
 
 step1_data <- readRDS("Processed_Data/Step1_ComBat_Data.rds")
