@@ -14,7 +14,7 @@ for (pkg in cran_pkgs) { if (!requireNamespace(pkg, quietly = TRUE)) install.pac
 library(GEOquery); library(sva); library(ggplot2); library(dplyr); library(illuminaHumanv3.db)
 library(patchwork); library(ggsci); library(limma); library(ggrepel); library(ComplexHeatmap); library(circlize)
 
-set.seed(2026)
+set.seed(1122)
 dir.create("Manuscript_Figures", showWarnings = FALSE)
 dir.create("Processed_Data", showWarnings = FALSE)
 
