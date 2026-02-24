@@ -12,7 +12,7 @@ library(clusterProfiler)
 library(org.Hs.eg.db)
 
 dir.create("Manuscript_Figures/Validation", recursive = TRUE, showWarnings = FALSE)
-set.seed(2026)
+set.seed(1122)
 
 # ==============================================================================
 # Step 6: ML Model Construction & Discovery Cohort Evaluation
