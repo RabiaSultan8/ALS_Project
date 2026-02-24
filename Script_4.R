@@ -7,6 +7,7 @@ library(GEOquery)
 library(dplyr)
 library(pROC)
 library(ggplot2)
+library(ggforce)
 library(ggpubr)
 library(clusterProfiler)
 library(org.Hs.eg.db)
@@ -61,6 +62,54 @@ p_violin <- ggplot(disc_data, aes(x = Group, y = RiskScore, fill = Group)) +
 
 ggsave("Manuscript_Figures/Validation/Figure6B_RiskScore_Violin.png", plot = p_violin, width = 5, height = 6, dpi = 600)
 ggsave("Manuscript_Figures/Validation/Figure6B_RiskScore_Violin.pdf", plot = p_violin, width = 5, height = 6)
+
+# Plot 6C
+disc_data$Group <- factor(ifelse(disc_data$Diagnosis == 1, "ALS", "Control"), levels = c("Control", "ALS"))
+p_sina <- ggplot(disc_data, aes(x = Group, y = RiskScore, fill = Group, color = Group)) +
+  # Sina points (shaped by density)
+  geom_sina(
+    size = 2.2, alpha = 0.55, shape = 16,
+    maxwidth = 0.6, seed = 2026
+  ) +
+  # Floating median bar
+  stat_summary(
+    fun = median, geom = "crossbar",
+    width = 0.35, linewidth = 0.8,
+    color = "black", fatten = 1
+  ) +
+  # IQR error bar
+  stat_summary(
+    fun.data = function(x) {
+      data.frame(
+        y    = median(x),
+        ymin = quantile(x, 0.25),
+        ymax = quantile(x, 0.75)
+      )
+    },
+    geom = "errorbar", width = 0.15, linewidth = 0.7, color = "black"
+  ) +
+  scale_fill_manual(values  = c("ALS" = "#BC3C29FF", "Control" = "#0072B5FF")) +
+  scale_color_manual(values = c("ALS" = "#BC3C29FF", "Control" = "#0072B5FF")) +
+  stat_compare_means(
+    method = "wilcox.test", label = "p.signif",
+    label.x = 1.5, label.y = 1.08,
+    size = 7, fontface = "bold", color = "black"
+  ) +
+  scale_y_continuous(limits = c(-0.05, 1.15), expand = c(0, 0)) +
+  theme_classic(base_size = 15) +
+  labs(
+    title = "B. Diagnostic Risk Score Distribution",
+    y     = "Predicted Probability of ALS",
+    x     = ""
+  ) +
+  theme(
+    legend.position  = "none",
+    plot.title       = element_text(face = "bold", hjust = 0.5),
+    axis.text.x      = element_text(face = "bold", size = 13)
+  )
+
+ggsave("Manuscript_Figures/Validation/Figure6B_RiskScore_Sina.png", plot = p_sina, width = 5, height = 6, dpi = 600)
+ggsave("Manuscript_Figures/Validation/Figure6B_RiskScore_Sina.pdf", plot = p_sina, width = 5, height = 6)
 
 # 6. Define the Universal Validation Engine
 evaluate_validation <- function(val_expr, val_labels, cohort_name, plot_prefix, model, sig_genes) {
@@ -233,6 +282,8 @@ message("\n--- STEP 8: COMPOSITE SCORING (BPS) ---")
 disc_expr_t <- as.data.frame(t(expr_data$expr_combat[consensus_genes, ]))
 val1_mat <- as.data.frame(t(val_expr_28253))
 val2_mat <- as.data.frame(t(val_expr_234297_final))
+
+disc_labels <- ifelse(expr_data$group_factor == "ALS", 1, 0)
 
 get_safe_auc <- function(gene, expr_matrix, labels) {
   if (gene %in% colnames(expr_matrix)) {
