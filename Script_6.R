@@ -13,7 +13,7 @@ dir.create("Manuscript_Figures/Drug_Repurposing", recursive = TRUE, showWarnings
 message("Starting Step 10: Drug Repurposing via DSigDB...")
 
 # 1. Load the Full 21-Gene Consensus Signature for Statistical Power
-consensus_genes <- read.csv("Processed_Data/Final_21Gene_Signature.csv")$Gene
+consensus_genes <- read.csv("Processed_Data/Final_Gene_Signature.csv")$Gene
 message(sprintf("Querying DSigDB with %d consensus genes...", length(consensus_genes)))
 
 # 2. Connect to Enrichr and Query DSigDB
