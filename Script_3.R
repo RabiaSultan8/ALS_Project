@@ -86,7 +86,7 @@ consensus_genes <- Reduce(intersect, gene_lists)
 p_venn <- ggVennDiagram(gene_lists, label = "count", label_alpha = 0, edge_size = 1.5, set_size = 5) + scale_fill_gradient(low = "#FFF5EB", high = "#E64B35", name = "Gene Count") + scale_color_manual(values = c("#4DBBD5", "#E64B35", "#00A087")) + labs(title = paste0("Triple-Algorithm Consensus (n = ", length(consensus_genes), " genes)")) + theme_void(base_size = 14) + theme(plot.title = element_text(face = "bold", size = 16, hjust = 0.5), legend.position = "right", legend.title = element_text(face = "bold"))
 ggsave("Manuscript_Figures/Step5_MachineLearning/Figure5F_Venn.pdf", plot = p_venn, width = 8, height = 6)
 ggsave("Manuscript_Figures/Step5_MachineLearning/Figure5F_Venn.png", plot = p_venn, width = 8, height = 6, dpi = 600)
-write.csv(data.frame(Gene = consensus_genes), "Processed_Data/Final_21Gene_Signature.csv", row.names = FALSE)
+write.csv(data.frame(Gene = consensus_genes), "Processed_Data/Final_Gene_Signature.csv", row.names = FALSE)
 
 # G. CONSENSUS ROC
 glm_model <- glm(ml_labels ~ ., data = data.frame(ml_data[, consensus_genes], ml_labels), family = binomial)
