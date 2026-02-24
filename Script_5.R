@@ -18,7 +18,7 @@ message("Starting Step 9: Immune Infiltration Analysis (ssGSEA)...")
 
 # 1. Load Discovery Data & The Core 6-Gene Signature
 expr_data <- readRDS("Processed_Data/Step1_ComBat_Data.rds")
-core_genes <- c("SRPK1", "TMEM71", "YPEL5", "RBM6", "SLC40A1", "ABCA1")
+core_genes <- c("XPO1", "PPP1CC", "DHX15", "EIF4G2", "ZFAND5", "FBXO11")
 
 expr_mat <- expr_data$expr_combat
 group_factor <- expr_data$group_factor
