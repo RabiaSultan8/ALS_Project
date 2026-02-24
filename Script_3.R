@@ -3,7 +3,7 @@
 # ==============================================================================
 packages <- c("randomForest", "glmnet", "caret", "ggplot2", "dplyr", "tidyr", "ggVennDiagram", "pROC", "scales", "viridis")
 for (pkg in packages) { if (!requireNamespace(pkg, quietly = TRUE)) install.packages(pkg); library(pkg, character.only = TRUE) }
-set.seed(2026)
+set.seed(1122)
 dir.create("Manuscript_Figures/Step5_MachineLearning", recursive = TRUE, showWarnings = FALSE)
 
 theme_publication <- function(base_size = 14) {
