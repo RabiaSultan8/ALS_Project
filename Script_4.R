@@ -21,7 +21,7 @@ message("--- STEP 6: DISCOVERY MODEL CONSTRUCTION ---")
 
 # 1. Load Discovery Data & Consensus Signature
 expr_data <- readRDS("Processed_Data/Step1_ComBat_Data.rds")
-consensus_genes <- read.csv("Processed_Data/Final_21Gene_Signature.csv")$Gene
+consensus_genes <- read.csv("Processed_Data/Final_Gene_Signature.csv")$Gene
 
 message(sprintf("Building model using %d consensus signature genes...", length(consensus_genes)))
 
