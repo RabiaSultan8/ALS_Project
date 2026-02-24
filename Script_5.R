@@ -40,7 +40,7 @@ immune_signatures <- list(
 # 3. Run ssGSEA to estimate Immune Cell Abundance
 message("Running ssGSEA to estimate immune cell fractions...")
 tryCatch({
-  gsva_param <- gsvaParam(expr_mat, immune_signatures, maxDiff = TRUE)
+  gsva_param <- ssgseaParam(expr_mat, immune_signatures, maxDiff = TRUE)
   immune_scores <- gsva(gsva_param)
 }, error = function(e) {
   immune_scores <<- gsva(expr_mat, immune_signatures, method = "ssgsea", verbose = FALSE)
@@ -71,7 +71,7 @@ message("Calculating correlations between 6 Core Genes and Immune Cells...")
 core_expr <- t(expr_mat[core_genes, ])
 
 # Compute Spearman correlation matrix safely
-cor_mat <- cor(x = core_expr, y = immune_df %>% select(-Diagnosis), method = "spearman")
+cor_mat <- cor(x = core_expr, y = immune_df %>% dplyr::select(-Diagnosis), method = "spearman")
 
 col_fun <- colorRampPalette(c("#0072B5FF", "white", "#BC3C29FF"))(100)
 
