@@ -1,5 +1,5 @@
 # ==============================================================================
-# 02_WGCNA.R
+# 02_WGCNA_Analysis.R
 #
 # Weighted Gene Co-expression Network Analysis on the GSE112676 discovery cohort.
 #
