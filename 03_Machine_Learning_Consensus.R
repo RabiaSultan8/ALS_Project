@@ -538,7 +538,10 @@ if (length(missing_genes) > 0) {
 disc_data_raw       <- as.data.frame(
   t(expr_mat[consensus_genes, , drop = FALSE])
 )
-disc_data           <- as.data.frame(scale(disc_data_raw))
+disc_scaled_obj     <- scale(disc_data_raw)
+disc_center         <- attr(disc_scaled_obj, "scaled:center")  # HGNC-named
+disc_scale_sd       <- attr(disc_scaled_obj, "scaled:scale")   # HGNC-named
+disc_data           <- as.data.frame(disc_scaled_obj)
 colnames(disc_data) <- make.names(colnames(disc_data), unique = TRUE)
 model_gene_names    <- colnames(disc_data)
 disc_data$Diagnosis <- diagnosis_bin
@@ -689,7 +692,9 @@ saveRDS(
     auc_disc_df      = auc_disc_df,
     fallback_used    = fallback_used,
     optimal_svm_n    = optimal_n,
-    name_map         = name_map
+    name_map         = name_map,
+	disc_center      = disc_center,
+	disc_scale_sd    = disc_scale_sd
   ),
   "Processed_Data/Step4_ML_Results.rds"
 )
