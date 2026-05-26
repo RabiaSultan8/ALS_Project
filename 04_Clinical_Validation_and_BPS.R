@@ -63,6 +63,8 @@ wgcna_data       <- readRDS("Processed_Data/Step3_WGCNA_Data.rds")
 logit_model      <- ml_results$logit_model
 consensus_genes  <- ml_results$consensus_genes
 model_gene_names <- ml_results$model_gene_names
+disc_center      <- ml_results$disc_center
+disc_scale_sd    <- ml_results$disc_scale_sd
 disc_expr        <- step1_data$expr_discovery
 disc_labels      <- step1_data$group_factor
 
@@ -82,7 +84,8 @@ message(sprintf("Consensus signature: %d genes — %s",
 # Z-score scales INDEPENDENTLY of discovery — correct for blind validation.
 # Missing genes imputed as 0 after scaling.
 prepare_val_data <- function(val_expr, val_labels, sig_genes,
-                              model, model_names) {
+                              model, model_names,
+                              disc_center, disc_scale_sd) {
   available <- intersect(sig_genes, rownames(val_expr))
   missing   <- setdiff(sig_genes, rownames(val_expr))
 
@@ -97,7 +100,11 @@ prepare_val_data <- function(val_expr, val_labels, sig_genes,
   }
 
   val_df <- as.data.frame(t(val_expr[available, , drop = FALSE]))
-  val_df <- as.data.frame(scale(val_df))
+  for (g in available) {
+    if (g %in% names(disc_center) && disc_scale_sd[g] > 0) {
+	  val_df[[g]] <- (val_df[[g]] - disc_center[g]) / disc_scale_sd[g]
+	}
+  }
 
   for (g in missing) val_df[[g]] <- 0
 
@@ -333,7 +340,8 @@ labels_arm1 <- ifelse(group_112680[keep_arm1] == "ALS", "ALS", "Control")
 
 val_df_arm1 <- prepare_val_data(
   val_expr_112680[, keep_arm1], labels_arm1,
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 roc_arm1 <- compute_roc(val_df_arm1)
 
@@ -361,7 +369,8 @@ labels_arm2_binary <- ifelse(group_112680[keep_arm2] == "ALS",
 
 val_df_arm2 <- prepare_val_data(
   val_expr_112680[, keep_arm2], labels_arm2_binary,
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 roc_arm2 <- compute_roc(val_df_arm2)
 
@@ -393,7 +402,8 @@ labels_arm3 <- ifelse(group_112680[keep_arm3] == "MIM",
 
 val_df_arm3 <- prepare_val_data(
   val_expr_112680[, keep_arm3], labels_arm3,
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 roc_arm3 <- compute_roc(val_df_arm3)
 
@@ -419,7 +429,8 @@ message("Generating three-group risk score violin (Figure 6C)...")
 
 all_112680_df <- prepare_val_data(
   val_expr_112680, group_112680,
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 
 all_112680_df$Group <- factor(group_112680, levels = c("CON", "MIM", "ALS"))
@@ -560,7 +571,8 @@ message(sprintf("Consensus gene coverage: %d / %d",
 val_df_28253 <- prepare_val_data(
   val_expr_28253[, keep_28253],
   labels_28253[keep_28253],
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 roc_28253 <- compute_roc(val_df_28253)
 
@@ -689,7 +701,8 @@ message(sprintf("Consensus gene coverage: %d / %d",
 val_df_234297 <- prepare_val_data(
   val_expr_234297[, keep_234297],
   labels_234297[keep_234297],
-  consensus_genes, logit_model, model_gene_names
+  consensus_genes, logit_model, model_gene_names,
+  disc_center, disc_scale_sd
 )
 roc_234297 <- compute_roc(val_df_234297)
 
